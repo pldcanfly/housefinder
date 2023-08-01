@@ -10,7 +10,6 @@
 
 	let discrictmap = new Map<number, district>();
 	state.subscribe((state) => {
-		console.log(state);
 		for (const discrict of state?.districts || []) {
 			if (selectedDistrict == 0) selectedDistrict = discrict.id;
 			discrictmap.set(discrict.id, discrict);
@@ -60,6 +59,7 @@
 	let timeout = 0;
 	const refresh = () => {
 		if (timeout <= 0) {
+			plotmap = new Map();
 			fetchState(selectedServer);
 			timeout = 60;
 			const int = setInterval(() => {
