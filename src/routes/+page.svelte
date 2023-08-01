@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { state, type district, type openplot, fetchState } from '$lib/api';
 	let selectedSize = -1;
-	let selectedRestriction = -1;
+	let selectedRestriction = 'all';
 	let selectedDistrict = 0;
 	let selectedServer = 0;
 
@@ -22,7 +22,7 @@
 	$: {
 		plotmap = new Map();
 		baseplots = (discrictmap.get(selectedDistrict)?.open_plots || []).filter((item) => {
-			if (selectedRestriction != -1 && item.purchase_system != selectedRestriction) return false;
+			if (selectedRestriction == 'nofc' && item.purchase_system == 3) return false;
 			if (selectedSize != -1 && item.size != selectedSize) return false;
 
 			return true;
@@ -56,6 +56,20 @@
 		selectedServer = id;
 		fetchState(selectedServer);
 	};
+
+	let timeout = 0;
+	const refresh = () => {
+		if (timeout <= 0) {
+			fetchState(selectedServer);
+			timeout = 60;
+			const int = setInterval(() => {
+				timeout--;
+				if (timeout <= 0) {
+					clearInterval(int);
+				}
+			}, 1000);
+		}
+	};
 </script>
 
 <svelte:head>
@@ -77,6 +91,7 @@
 		<div>City</div>
 		<div>Restriction</div>
 		<div>Size</div>
+		<div />
 
 		<select bind:value={selectedDistrict}>
 			{#each discrictmap as discrict}
@@ -85,10 +100,8 @@
 		</select>
 
 		<select bind:value={selectedRestriction}>
-			<option value={-1}>All</option>
-			<option value={3}>{restrictionmap.get(3)}</option>
-			<option value={5}>{restrictionmap.get(5)}</option>
-			<option value={7}>{restrictionmap.get(7)}</option>
+			<option value="all">All</option>
+			<option value="nofc">no FC-only</option>
 		</select>
 
 		<select bind:value={selectedSize}>
@@ -97,6 +110,11 @@
 			<option value={1}>{sizemap.get(1)}</option>
 			<option value={2}>{sizemap.get(2)}</option>
 		</select>
+		<div>
+			<button style="width:100%" on:click={refresh} class:inactive={timeout > 0}
+				>Aktualisieren{#if timeout > 0} ({timeout}s){/if}</button
+			>
+		</div>
 	</div>
 
 	<div class="housegrid">
@@ -155,6 +173,11 @@
 			background-color: #939393;
 		}
 	}
+
+	button.inactive {
+		cursor: no-drop;
+		opacity: 0.5;
+	}
 	.mapcontainer {
 		display: grid;
 		height: 100vh;
@@ -171,7 +194,7 @@
 	.filters {
 		display: grid;
 		gap: 5px;
-		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-columns: 1fr 1fr 1fr 200px;
 	}
 
 	.housegrid {
