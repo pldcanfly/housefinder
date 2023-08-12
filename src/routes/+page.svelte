@@ -48,6 +48,8 @@
 
 	const servermap = new Map<number, string>([
 		[67, 'Shiva'],
+		[403, 'Raiden'],
+		[33, 'Twintania'],
 		[42, 'Zordiak']
 	]);
 
@@ -125,6 +127,7 @@
 				<div>Entries</div>
 				<div>Size</div>
 				<div>Restriction</div>
+				<div>Phase</div>
 			</div>
 		</div>
 
@@ -139,6 +142,7 @@
 						<div>{subplot.lotto_entries == null ? '?' : subplot.lotto_entries}</div>
 						<div>{sizemap.get(subplot.size)}</div>
 						<div>{restrictionmap.get(subplot.purchase_system)}</div>
+						<div>{subplot.lotto_phase}</div>
 					{/each}
 				</div>
 			</div>
@@ -210,7 +214,7 @@
 
 			.sub {
 				display: grid;
-				grid-template-columns: 1fr 1fr 1fr 1fr;
+				grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 			}
 		}
 
