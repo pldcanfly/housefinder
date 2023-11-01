@@ -49,7 +49,9 @@
 	const servermap = new Map<number, string>([
 		[67, 'Shiva'],
 		[403, 'Raiden'],
+		[402, 'Alpha'],
 		[33, 'Twintania'],
+		[42, 'Zordiak'],
 		[42, 'Zordiak']
 	]);
 
